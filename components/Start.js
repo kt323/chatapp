@@ -17,7 +17,16 @@ const Start = ({ navigation }) => {
       console.error("Sign in error:", err);
     })
   }
-  const signInUser = () => {}
+  const signInUser = () => {
+    signInAnonymously(auth)
+      .then(result => {
+        navigation.navigate("Chat", { userID: result.user.uid, name: username, background: bgColor });
+        Alert.alert("Signed in Successfully!");
+      })
+      .catch((error) => {
+        Alert.alert("Unable to sign in, try later again.");
+      })
+  }
   return (
     <ImageBackground source={require('../image/Background-Image.png')} style={styles.container}>
       <Text style={styles.title}>Chat App</Text>
