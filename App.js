@@ -32,14 +32,15 @@ const App = () => {
   const auth = getAuth(app);
   const netInfo = useNetInfo();
 
-  // useEffect(() => {
-  //   if (connectionStatus.isConnected === false) {
-  //     Alert.alert("Connection lost!");
-  //     // disableNetwork(db);
-  //   } else if (connectionStatus.isConnected === true) {
-  //     enableNetwork(db);
-  //   }
-  // }, [netInfo.isConnected]);
+  const connectionStatus = useNetInfo();
+  useEffect(() => {
+    if (connectionStatus.isConnected === false) {
+      Alert.alert("Connection lost!");
+      disableNetwork(db);
+    } else if (connectionStatus.isConnected === true) {
+      enableNetwork(db);
+    }
+  }, [netInfo.isConnected]);
   return (
     <NavigationContainer>
       <Stack.Navigator
