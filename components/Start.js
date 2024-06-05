@@ -17,7 +17,7 @@ const Start = ({ navigation }) => {
       console.error("Sign in error:", err);
     })
   }
-
+  const signInUser = () => {}
   return (
     <ImageBackground source={require('../image/Background-Image.png')} style={styles.container}>
       <Text style={styles.title}>Chat App</Text>
