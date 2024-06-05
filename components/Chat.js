@@ -9,28 +9,12 @@ import MapView from "react-native-maps";
 const Chat = ({ route, navigation, db, isConnected, storage }) => {
   const { username, background, userID } = route.params;
   const [messages, setMessages] = useState([]);
-  const collectionName = "messages";
+  // const collectionName = "messages";
 
   const onSend = async (newMessages = []) => {
-    setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
-    const { _id, createdAt, text, user } = newMessages[0];
-    const message = {
-      _id,
-      text,
-      createdAt: Timestamp.fromDate(new Date()),
-      user: {
-        _id: userID,
-        name: username,
-        avatar: user.avatar || ''
-      }
-    };
-    try {
-      await addDoc(collection(db, collectionName), message);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-    }
-  };
-
+    addDoc(collection(db, "messages"), newMessages[0]);
+  }
+  
   const renderBubble = (props) => (
     <Bubble
       {...props}
@@ -48,10 +32,11 @@ const Chat = ({ route, navigation, db, isConnected, storage }) => {
 
   useEffect(() => {
     let unsubMessages;
+
     if (isConnected) {
       navigation.setOptions({ title: username });
 
-      const q = query(collection(db, collectionName), orderBy("createdAt", "desc"));
+      const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
       unsubMessages = onSnapshot(q, (docs) => {
         let newMessages = [];
         docs.forEach(doc => {

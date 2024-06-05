@@ -4,10 +4,30 @@ import { useActionSheet } from "@expo/react-native-action-sheet"
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { InputToolbar } from "react-native-gifted-chat";
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID, renderInputToolbar }) => {
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID }) => {
     const actionSheet = useActionSheet();
+
+    const onActionPress = () => {
+        const options = ["Select an image from library", "Take a photo", "Share location", 'Cancel'];
+        const cancelButtonIndex = options.length - 1;
+        actionSheet.showActionSheetWithOptions({
+                options,
+                cancelButtonIndex,
+            },
+            async (buttonIndex) => {
+                switch (buttonIndex) {
+                    case 0:
+                        return pickImage();
+                    case 1:
+                        return takePhoto();
+                    case 2:
+                        return getLocation();
+                    default:
+                }
+            },
+        );
+    };
 
     const generateReference = (uri) => {
         const timeStamp = (new Date()).getTime();
@@ -35,11 +55,12 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID, r
     const takePhoto = async () => {
         let permissions = await ImagePicker.requestCameraPermissionsAsync();
         if (permissions?.granted) {
-            let result = await ImagePicker.launchCameraAsync();
-            if (!result.canceled) await uploadAndSendImage(result.assets[0].uri);
-            else Alert.alert("Permissions haven't been granted.");
+          let result = await ImagePicker.launchCameraAsync();
+          if (!result.canceled) await uploadAndSendImage(result.assets[0].uri)
+          else Alert.alert("Permissions haven't been granted");
         }
-    }
+      }
+      
 
     async function getLocation() {
         let permissions = await Location.requestForegroundPermissionsAsync();
@@ -59,26 +80,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, storage, userID, r
             Alert.alert("Permissions haven't been granted.");
         }
     }
-    const onActionPress = () => {
-        const options = ["Select an image from library", "Take a photo", "Share location", 'Cancel'];
-        const cancelButtonIndex = options.length - 1;
-        actionSheet.showActionSheetWithOptions({
-                options,
-                cancelButtonIndex,
-            },
-            async (buttonIndex) => {
-                switch (buttonIndex) {
-                    case 0:
-                        return pickImage();
-                    case 1:
-                        return takePhoto();
-                    case 2:
-                        return getLocation();
-                    default:
-                }
-            },
-        );
-    };
+
     
     return (
     <TouchableOpacity style={styles.container} onPress={onActionPress}>
