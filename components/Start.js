@@ -7,26 +7,19 @@ const Start = ({ navigation }) => {
   const COLORS = ["#090C08", "#474056", "#8A95A5", "#B9C6AE"];
   const [bgColor, setBgColor] = useState(COLORS[3]);
 
-  const auth = getAuth ();
-    const { user } =  () => {
-      signInAnonymously(auth).then(res =>{
-      navigation.navigate("Chat", { userID: res.user.uid, name: username, background: bgColor });
-      Alert.alert("Signed in Successfully");
-    }).catch (err => {
-      Alert.alert("Unable to sign in, try again later");
-      console.error("Sign in error:", err);
-    })
-  }
   const signInUser = () => {
+    const auth = getAuth();
     signInAnonymously(auth)
       .then(result => {
-        navigation.navigate("Chat", { userID: result.user.uid, name: username, background: bgColor });
+        navigation.navigate("Chat", { userID: result.user.uid, username, background: bgColor });
         Alert.alert("Signed in Successfully!");
       })
       .catch((error) => {
-        Alert.alert("Unable to sign in, try later again.");
-      })
-  }
+        Alert.alert("Unable to sign in, try again later.");
+        console.error("Sign in error:", error);
+      });
+  };
+
   return (
     <ImageBackground source={require('../image/Background-Image.png')} style={styles.container}>
       <Text style={styles.title}>Chat App</Text>
@@ -38,7 +31,7 @@ const Start = ({ navigation }) => {
           placeholder="Your Name"
           autoCapitalize="words"
         />
-        <Text style={styles.text}>Choose background color</Text>
+        <Text style={styles.text}>Choose Background Color</Text>
         <View style={styles.bgColors}>
           {COLORS.map(color => (
             <TouchableOpacity
